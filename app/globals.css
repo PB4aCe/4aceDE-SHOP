@@ -24,3 +24,33 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@keyframes bw-blink {
+  0% {
+    opacity: 1;
+  }
+  49% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.2;
+  }
+  100% {
+    opacity: 0.2;
+  }
+}
+
+/* Hauptzeilen, leicht zeitversetzt */
+.bw-blink-1 {
+  animation: bw-blink 1s infinite steps(2, start);
+}
+
+.bw-blink-2 {
+  animation: bw-blink 1s infinite steps(2, start);
+  animation-delay: 0.33s;
+}
+
+.bw-blink-3 {
+  animation: bw-blink 1s infinite steps(2, start);
+  animation-delay: 0.66s;
+}
