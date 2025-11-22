@@ -1,12 +1,27 @@
-"use client";
+// app/thank-you/page.tsx
 
-import { useSearchParams } from "next/navigation";
+interface ThankYouPageProps {
+  searchParams: { [key: string]: string | string[] | undefined };
+}
 
-export default function ThankYouPage() {
-  const searchParams = useSearchParams();
+export default function ThankYouPage({ searchParams }: ThankYouPageProps) {
+  // order aus searchParams holen
+  const orderParam = searchParams.order;
+  const methodParam = searchParams.method;
 
-  const orderNumber = searchParams.get("order") || undefined;
-  const method = searchParams.get("method") || undefined;
+  const orderNumber =
+    typeof orderParam === "string"
+      ? orderParam
+      : Array.isArray(orderParam)
+      ? orderParam[0]
+      : undefined;
+
+  const method =
+    typeof methodParam === "string"
+      ? methodParam
+      : Array.isArray(methodParam)
+      ? methodParam[0]
+      : undefined;
 
   const methodText =
     method === "paypal"
