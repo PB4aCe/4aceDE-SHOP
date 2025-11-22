@@ -135,9 +135,39 @@ export function PayPalButton({
       return;
     }
 
-    const orderNumber =
+    const orderNumber: string =
       result.orderNumber ?? result.localOrderId ?? "UNBEKANNT";
 
+    // 🔹 NEU: Bestellung in DB speichern
+    if (checkoutCustomer) {
+      await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          orderNumber,
+          paymentMethod: "paypal" as const,
+          status: "paid",
+          paypalOrderId: data.orderID,
+          paypalCaptureId: result.captureId ?? null, // falls dein capture-order das zurückgibt
+          customer: {
+            firstName: checkoutCustomer.firstName,
+            lastName: checkoutCustomer.lastName,
+            email: checkoutCustomer.email,
+            street: checkoutCustomer.street,
+            zip: checkoutCustomer.zip,
+            city: checkoutCustomer.city,
+            country: checkoutCustomer.country,
+          },
+          totals: {
+            totalAmount: amount,
+            currency: "EUR",
+          },
+          // payer/shipping kannst du später ergänzen, wenn du sie aus result bekommst
+        }),
+      });
+    }
+
+    // Warenkorb leeren + Redirect
     clearCart();
     window.location.href = `/thank-you?order=${encodeURIComponent(
       orderNumber
@@ -149,6 +179,7 @@ export function PayPalButton({
     );
   }
 },
+
 
         onError: (err: any) => {
           console.error("PayPal onError:", err);

@@ -95,40 +95,72 @@ export default function CheckoutPage() {
   }
 
   async function handleVorkasse() {
-    if (!confirmed) return;
-    try {
-      setProcessingVorkasse(true);
-      const res = await fetch("/api/checkout/vorkasse", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          customer: data,
-          items: items.map((i) => ({
-            id: i.product.id,
-            name: i.product.name,
-            price: i.product.price,
-            quantity: i.quantity,
-          })),
-          total: finalTotal,
-          couponCode: activeCouponCode,
-        }),
-      });
-      const json = await res.json();
-      if (!res.ok || !json.success) {
-        alert("Fehler bei der Vorkasse-Bestellung.");
-        setProcessingVorkasse(false);
-        return;
-      }
-      clearCart();
-      window.location.href = `/thank-you?order=${encodeURIComponent(
-        json.orderNumber
-      )}&method=vorkasse`;
-    } catch (e) {
-      console.error(e);
-      alert("Unerwarteter Fehler bei der Vorkasse-Bestellung.");
+  if (!confirmed) return;
+  try {
+    setProcessingVorkasse(true);
+
+    // 1. Bisherige API: Mail etc.
+    const res = await fetch("/api/checkout/vorkasse", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        customer: data,
+        items: items.map((i) => ({
+          id: i.product.id,
+          name: i.product.name,
+          price: i.product.price,
+          quantity: i.quantity,
+        })),
+        total: finalTotal,
+        couponCode: activeCouponCode,
+      }),
+    });
+    const json = await res.json();
+    if (!res.ok || !json.success || !json.orderNumber) {
+      alert("Fehler bei der Vorkasse-Bestellung.");
       setProcessingVorkasse(false);
+      return;
     }
+
+    const orderNumber: string = json.orderNumber;
+
+    // 2. NEU: Bestellung in DB speichern
+    await fetch("/api/orders", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        orderNumber,
+        paymentMethod: "vorkasse" as const,
+        status: "pending",
+        customer: {
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          street: data.street,
+          zip: data.zip,
+          city: data.city,
+          country: data.country,
+        },
+        totals: {
+          totalAmount: finalTotal,
+          currency: "EUR",
+        },
+        // billing/payer/shipping kannst du später bei Bedarf ergänzen
+      }),
+    });
+
+    // 3. Warenkorb leeren + Redirect
+    clearCart();
+    window.location.href = `/thank-you?order=${encodeURIComponent(
+      orderNumber
+    )}&method=vorkasse`;
+  } catch (e) {
+    console.error(e);
+    alert("Unerwarteter Fehler bei der Vorkasse-Bestellung.");
+    setProcessingVorkasse(false);
   }
+}
+
 
   function handleApplyCoupon() {
   const code = couponInput.trim();
