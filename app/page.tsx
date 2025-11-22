@@ -163,31 +163,28 @@ export default function HomePage() {
         <div className="grid gap-5 md:grid-cols-3 text-sm">
           <div className="border border-slate-800 rounded-2xl p-4 bg-black/60">
             <p className="text-slate-200 font-semibold mb-1">
-              Klarer Look, keine Spielerei
+              das Neue 4ace.de V2
             </p>
             <p className="text-slate-400 text-[13px]">
-              Schwarz, Weiß, Stahl – Fokus auf Produkt & Gravur, nicht auf bunte
-              Ablenkung. Ideal für Männergeschenke & Creator-Branding.
+              Nach 450 Tagen Verspätung, Modernes Design, alles Eigenproduktion, kein 0815 Shopify
             </p>
           </div>
           <div className="border border-slate-800 rounded-2xl p-4 bg-black/60">
             <p className="text-slate-200 font-semibold mb-1">
-              Kleiner Shop, kurze Wege
+              BLACK WEEK NICHT VERPASSEN!
             </p>
             <p className="text-slate-400 text-[13px]">
-              Direkter Kontakt, schnelle Anpassungen, individuelle Bundles – kein
-              anonymes Ticketsystem. Black Week eignet sich perfekt, um den Shop
-              zu testen.
+              Jetzt Zuschlagen bei unserem Black Week, alles bis zu 40% Reduziert! -Evtl. auch 50-60 🤫-
             </p>
           </div>
           <div className="border border-slate-800 rounded-2xl p-4 bg-black/60">
             <p className="text-slate-200 font-semibold mb-1">
-              PayPal-Checkout integriert
+              PayPal und Vorkassen Checkout
             </p>
             <p className="text-slate-400 text-[13px]">
-              Kunden bezahlen sicher per PayPal oder Vorkasse, du bekommst eine
-              klare, nachvollziehbare Abwicklung für deine Drops – inkl.
-              Bestellnummern & Mailsystem.
+              Ihr bezahlt sicher per PayPal oder Vorkasse, du bekommst eine
+              klare, nachvollziehbare Abwicklung.
+              Mehr Zahlungsmethoden folgen!
             </p>
           </div>
         </div>
