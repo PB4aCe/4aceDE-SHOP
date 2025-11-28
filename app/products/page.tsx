@@ -3,10 +3,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { products } from "@/data/products";
 import { AddToCartButton } from "@/components/AddToCartButton";
-import { BlackWeekBanner } from "@/components/BlackWeekBanner";
+//import { BlackWeekBanner } from "@/components/BlackWeekBanner";
 
 
 export default function ProductsPage() {
+  // Toggle für den Banner auf der Produktübersicht
+  const showBlackWeekBanner = false;
   return (
     <div className="space-y-8">
       <header className="flex items-center justify-between">
@@ -15,7 +17,7 @@ export default function ProductsPage() {
           Auswahl aktueller Artikel im 4aCe Shop.
         </p>
       </header>
-<BlackWeekBanner />
+
       <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {products.map((p) => (
           <article

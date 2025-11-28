@@ -18,11 +18,11 @@ export async function dbQuery<T = any>(
   return rows as T[];
 }
 
-// NEU: für INSERT / UPDATE / DELETE
+// NEU: für INSERT/UPDATE/DELETE
 export async function dbExecute(
   query: string,
   params?: any[]
 ) {
   const [result] = await pool.execute(query, params);
-  return result; // kannst du bei INSERT/UPDATE/DELETE ignorieren oder auswerten
+  return result;
 }

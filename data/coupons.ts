@@ -13,12 +13,12 @@ export type Coupon = {
 
 // 👉 Hier kannst du deine Codes pflegen
 export const coupons: Coupon[] = [
-  //{
-    //code: "TEST10",
-    //description: "10 % Test-Rabatt auf alle Produkte",
-    //percentage: 10,
-    //active: true,
-  //},
+  {
+    code: "meryez10",
+    description: "10% Rabatt für Meryem Community",
+    percentage: 10,
+    active: true,
+  },
   //{
     //code: "OHNELIEBE15",
     //description: "15 % auf OHNE LIEBE",

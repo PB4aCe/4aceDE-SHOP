@@ -5,36 +5,6 @@ import Image from "next/image";
 export default function HomePage() {
   return (
     <div className="space-y-12">
-      {/* BLACK WEEK / NEUERÖFFNUNG Banner */}
-      <section className="border border-slate-800 rounded-2xl bg-black/70 px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-[0_0_35px_rgba(255,255,255,0.08)]">
-        <div className="flex items-center gap-3">
-          <div className="relative flex h-3 w-3">
-            <span className="absolute inline-flex h-full w-full rounded-full bg-red-500/60 opacity-70 animate-ping" />
-            <span className="relative inline-flex h-3 w-3 rounded-full bg-red-500" />
-          </div>
-          <div className="flex flex-col">
-            <span className="text-[11px] uppercase tracking-[0.35em] text-slate-300">
-              Black Week · Neueröffnung
-            </span>
-            <span className="text-sm text-slate-200">
-              Eröffnungsdeals auf ALLE Artikel – nur für kurze Zeit.
-            </span>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <div className="px-3 py-1 rounded-full border border-red-500/70 bg-red-600/20 text-[11px] font-semibold uppercase tracking-wide text-red-300 animate-pulse">
-            Bis zu <span className="text-red-400 text-[12px]">40% Rabatt</span>
-          </div>
-          <Link
-            href="/products"
-            className="text-[11px] px-4 py-2 rounded-full border border-white/80 bg-white text-black font-semibold tracking-wide uppercase hover:bg-transparent hover:text-white transition-all"
-          >
-            Angebote ansehen
-          </Link>
-        </div>
-      </section>
-
       {/* Hero / Intro */}
       <section className="flex flex-col md:flex-row items-start md:items-center justify-between gap-10">
         <div className="space-y-4 max-w-xl">
@@ -42,17 +12,14 @@ export default function HomePage() {
             4aCe / Steel & Soul
           </p>
           <h1 className="text-4xl md:text-5xl font-semibold leading-tight text-white">
-            Black Week &{" "}
-            <span className="underline underline-offset-4 decoration-slate-500/80">
-              Neueröffnung
-            </span>
+            Der neue 4aCe-Shop
             <br />
-            + Release von HERZBLUT
+            &amp; Release von HERZBLUT
           </h1>
           <p className="text-slate-300 text-sm">
-            Nach 450 Tagen Verspätung – neuer Shop, neues Design + Black Deals!
-            Während der Black Week profitierst du von Eröffnungsrabatten auf alle
-            Artikel.
+            Nach 450 Tagen „wir bauen das noch kurz um“ ist Version 2 endlich
+            da: eigenes Design, eigener Checkout und ein Zuhause für Projekte,
+            in die wirklich Herz und Zeit geflossen sind.
           </p>
 
           <div className="flex flex-wrap gap-3 pt-2">
@@ -71,30 +38,29 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Rechte BLACK WEEK Box mit Blink-Animation */}
+        {/* Rechte Launch-Box (ohne Black-Week-Texte) */}
         <div className="relative w-full md:w-auto flex justify-end">
-          <div className="w-64 h-64 rounded-3xl bg-gradient-to-br from-black via-slate-900 to-black border border-red-600/70 shadow-[0_0_40px_rgba(248,113,113,0.5)] flex flex-col items-center justify-center gap-1 text-slate-50">
+          <div className="w-64 h-64 rounded-3xl bg-gradient-to-br from-black via-slate-900 to-black border border-emerald-600/70 shadow-[0_0_40px_rgba(16,185,129,0.5)] flex flex-col items-center justify-center gap-1 text-slate-50">
             <span className="text-[10px] tracking-[0.3em] uppercase text-slate-400">
-              4aCe Black Week
+              4aCe Shop Launch
             </span>
 
             <div className="mt-1 flex flex-col items-center leading-none">
-              <span className="text-3xl font-extrabold bw-blink-1">
-                BLACK
-              </span>
+              <span className="text-3xl font-extrabold bw-blink-1">NEW</span>
               <span className="text-3xl font-extrabold bw-blink-2">
-                WEEK
+                STORE
               </span>
               <span className="text-[11px] uppercase tracking-[0.2em] mt-3 text-slate-300">
-                bis zu
+                mit extra viel
               </span>
-              <span className="text-3xl font-extrabold text-red-400 bw-blink-3">
-                -40%
+              <span className="text-2xl font-extrabold text-emerald-400 bw-blink-3">
+                HERZBLUT
               </span>
             </div>
 
             <span className="mt-3 text-[10px] text-slate-400 text-center px-4">
-              Nur für kurze Zeit · Neueröffnung · Limitierte Kontingente
+              Kleine Auflagen, persönliche Betreuung und direkte Wege – kein
+              Massenmarkt, sondern bewusst ausgewählte Projekte.
             </span>
           </div>
         </div>
@@ -128,15 +94,15 @@ export default function HomePage() {
             </p>
             <p className="text-slate-400 text-[13px]">
               Rohe Emotionen, ehrliche Texte und keine geschönten Kanten –{" "}
-              <span className="italic">HERZBLUT</span> ist ihr neustes Projekt
-              und erstes mit Hardcover Umschlag.
-              Parallel dazu habt Ihr die möglichkeit alle 3 Bücher für einen Unschlagbaren
-              Preis zu ergaunern!
+              <span className="italic">HERZBLUT</span> ist ihr neuestes Projekt
+              und das erste mit Hardcover-Umschlag. Dazu hast du die Möglichkeit,
+              alle drei Bücher im Set zu einem fair kalkulierten Paketpreis zu
+              sichern.
             </p>
             <p className="text-slate-400 text-[13px]">
-              Ob du Meryem seit Jahren verfolgst oder sie jetzt erst entdeckst –
-              Black Week + Neueröffnung ist der perfekte Moment, um HERZBLUT in
-              dein Regal (oder Content) zu holen. JETZT ZUSCHLAGEN!
+              Ob du Meryem schon lange verfolgst oder sie gerade erst entdeckst:
+              Der neue Shop bündelt ihre Bücher, Bundles und kommende Editionen
+              zentral – ohne Umwege über zig Plattformen.
             </p>
 
             <div className="pt-1 flex flex-wrap gap-3 items-center">
@@ -146,10 +112,6 @@ export default function HomePage() {
               >
                 Zum Shop
               </Link>
-              {/*<span className="text-[11px] text-slate-500">}
-                Hinweis: HERZBLUT-Editionen & Bundles werden nach und nach
-                freigeschaltet.
-              </span>*/}
             </div>
           </div>
         </div>
@@ -163,28 +125,32 @@ export default function HomePage() {
         <div className="grid gap-5 md:grid-cols-3 text-sm">
           <div className="border border-slate-800 rounded-2xl p-4 bg-black/60">
             <p className="text-slate-200 font-semibold mb-1">
-              das Neue 4ace.de V2
+              Das neue 4ace.de V2
             </p>
             <p className="text-slate-400 text-[13px]">
-              Nach 450 Tagen Verspätung, Modernes Design, alles Eigenproduktion, kein 0815 Shopify
+              Modernes Layout, eigener Code, eigene Produkte. Kein Baukasten,
+              keine generischen Themes – sondern ein Setup, das mit deinen
+              Projekten wächst.
             </p>
           </div>
           <div className="border border-slate-800 rounded-2xl p-4 bg-black/60">
             <p className="text-slate-200 font-semibold mb-1">
-              BLACK WEEK NICHT VERPASSEN!
+              Fokus statt Fake-Rabatte
             </p>
             <p className="text-slate-400 text-[13px]">
-              Jetzt Zuschlagen bei unserem Black Week, alles bis zu 40% Reduziert! -Evtl. auch 50-60 🤫-
+              Hier gibt es keine „nur heute -90%“-Show, sondern fair kalkulierte
+              Preise, limitierte Auflagen und Aktionen, die wirklich Sinn
+              ergeben – nicht nur fürs Marketing.
             </p>
           </div>
           <div className="border border-slate-800 rounded-2xl p-4 bg-black/60">
             <p className="text-slate-200 font-semibold mb-1">
-              PayPal und Vorkassen Checkout
+              PayPal und Vorkassen-Checkout
             </p>
             <p className="text-slate-400 text-[13px]">
-              Ihr bezahlt sicher per PayPal oder Vorkasse, du bekommst eine
-              klare, nachvollziehbare Abwicklung.
-              Mehr Zahlungsmethoden folgen!
+              Du bezahlst sicher per PayPal oder Vorkasse und bekommst eine
+              klare, nachvollziehbare Abwicklung. Weitere Zahlungsmethoden sind
+              bereits in Planung.
             </p>
           </div>
         </div>
@@ -192,8 +158,8 @@ export default function HomePage() {
         {/* Trust-Zeile */}
         <p className="text-[11px] text-center text-slate-500 pt-1">
           ✔ SSL-verschlüsselter Checkout · ✔ Zahlung via PayPal (inkl.
-          Käuferschutz) & Vorkasse · ✔ Impressum, AGB & Widerruf nach deutschem
-          Recht · ✔ Black Week & Neueröffnungsrabatte auf ausgewählte Artikel
+          Käuferschutz) &amp; Vorkasse · ✔ Impressum, AGB &amp; Widerruf nach
+          deutschem Recht · ✔ fair kalkulierte Preise ohne Rabatt-Zirkus
         </p>
       </section>
     </div>
