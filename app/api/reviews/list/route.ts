@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { readReviews } from "@/lib/reviewsStore";
+import { readReviews, readReviewsByProduct } from "@/lib/reviewsStore";
 
 export const runtime = "nodejs";
 
@@ -8,13 +8,12 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const productId = searchParams.get("productId");
 
-    const all = await readReviews();
-    const filtered = productId ? all.filter(r => r.productId === productId) : all;
+    const reviews = productId
+      ? await readReviewsByProduct(productId)
+      : await readReviews();
 
-    // newest first
-    filtered.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
-
-    return NextResponse.json({ success: true, reviews: filtered });
+    // ✅ Sortierung ist in SQL schon DESC
+    return NextResponse.json({ success: true, reviews });
   } catch (err) {
     console.error("reviews/list error:", err);
     return NextResponse.json({ success: false, reviews: [] }, { status: 500 });

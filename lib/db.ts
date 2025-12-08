@@ -1,28 +1,9 @@
-// lib/db.ts
-import mysql from "mysql2/promise";
+import { neon } from "@neondatabase/serverless";
 
-const pool = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-  waitForConnections: true,
-  connectionLimit: 10,
-});
+const DATABASE_URL = process.env.DATABASE_URL;
 
-export async function dbQuery<T = any>(
-  query: string,
-  params?: any[]
-): Promise<T[]> {
-  const [rows] = await pool.query(query, params);
-  return rows as T[];
+if (!DATABASE_URL) {
+  throw new Error("DATABASE_URL missing. Did you run `vercel env pull .env.local`?");
 }
 
-// NEU: für INSERT/UPDATE/DELETE
-export async function dbExecute(
-  query: string,
-  params?: any[]
-) {
-  const [result] = await pool.execute(query, params);
-  return result;
-}
+export const sql = neon(DATABASE_URL);

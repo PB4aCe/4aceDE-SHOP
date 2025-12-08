@@ -1,7 +1,7 @@
 // app/api/mollie/webhook/route.ts
 import { NextResponse } from "next/server";
 import { mollieClient } from "@/lib/mollie";
-import { dbQuery } from "@/lib/db";
+import { sql } from "@/lib/db";
 
 // Helfer: Payment-ID aus allen möglichen Body-Formaten ziehen
 function extractPaymentIdFromRaw(raw: string): string | null {
@@ -22,6 +22,8 @@ function extractPaymentIdFromRaw(raw: string): string | null {
   return null;
 }
 
+export const runtime = "nodejs";
+
 export async function POST(req: Request) {
   try {
     const contentType = req.headers.get("content-type") || "";
@@ -38,7 +40,11 @@ export async function POST(req: Request) {
     }
 
     // ✅ Form-encoded / multipart
-    if (!paymentId && (contentType.includes("application/x-www-form-urlencoded") || contentType.includes("multipart/form-data"))) {
+    if (
+      !paymentId &&
+      (contentType.includes("application/x-www-form-urlencoded") ||
+        contentType.includes("multipart/form-data"))
+    ) {
       try {
         const form = await req.formData();
         paymentId = form.get("id")?.toString() ?? null;
@@ -61,7 +67,6 @@ export async function POST(req: Request) {
     const payment = await mollieClient.payments.get(paymentId);
     const status = payment.status; // "paid", "open", "failed", ...
 
-    // metadata sollte in create-payment gesetzt werden
     const metadata = (payment.metadata ?? {}) as Record<string, any>;
     const orderNumber: string | undefined =
       typeof metadata.orderNumber === "string" ? metadata.orderNumber : undefined;
@@ -80,32 +85,26 @@ export async function POST(req: Request) {
 
     // ✅ Wenn wir keine orderNumber haben, können wir nix sauber zuordnen
     if (!orderNumber) {
-      console.warn("Mollie webhook: paid, aber keine metadata.orderNumber gefunden.");
+      console.warn(
+        "Mollie webhook: paid, aber keine metadata.orderNumber gefunden."
+      );
       return NextResponse.json({ ok: true });
     }
 
     // ✅ Orders-Status update (minimal & schema-safe)
-    // Wir fassen nur "status" an, weil wir nicht sicher wissen,
-    // welche zusätzlichen Spalten du wirklich in deiner Tabelle hast.
     try {
-      await dbQuery(
-        "UPDATE orders SET status = ? WHERE order_number = ?",
-        ["paid", orderNumber]
-      );
+      await sql`
+        UPDATE orders
+        SET status = ${"paid"}
+        WHERE order_number = ${orderNumber}
+      `;
     } catch (dbErr) {
       console.warn("Mollie webhook: DB update failed (ignored):", dbErr);
     }
 
-    // ✅ OPTIONAL später:
-    // - Bestellbestätigung-Mail senden
-    // - Admin Notification
-    // Das hier lassen wir bewusst raus, damit dein Build nicht bricht,
-    // falls du keine zentrale Mail-Funktion/Route hast.
-
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error("Mollie webhook error:", err);
-
     // Mollie erwartet 200, sonst spammt es mögliche Retries.
     return NextResponse.json({ ok: true });
   }

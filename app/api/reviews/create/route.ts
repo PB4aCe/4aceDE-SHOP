@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
-import { readReviews, writeReviews, makeId, type Review } from "@/lib/reviewsStore";
+import {
+  makeId,
+  type Review,
+  addReview,
+  hasReviewedByEmail,
+} from "@/lib/reviewsStore";
 import { isValidEmail } from "@/lib/validators";
 
 export const runtime = "nodejs";
@@ -26,15 +31,9 @@ export async function POST(req: Request) {
 
     const safeRating = Math.max(1, Math.min(5, Number(rating)));
 
-    const all = await readReviews();
-
-    // ✅ 1x pro Produkt pro Email
+    // ✅ 1x pro Produkt pro Email (jetzt DB-basiert)
     if (email) {
-      const e = String(email).toLowerCase();
-      const exists = all.some(
-        r => r.productId === productId && (r.email || "").toLowerCase() === e
-      );
-
+      const exists = await hasReviewedByEmail(String(productId), String(email));
       if (exists) {
         return NextResponse.json(
           { success: false, error: "already_reviewed" },
@@ -45,7 +44,7 @@ export async function POST(req: Request) {
 
     const review: Review = {
       id: makeId(),
-      productId,
+      productId: String(productId),
       rating: safeRating,
       title: title?.toString().slice(0, 80),
       text: text?.toString().slice(0, 2000),
@@ -54,10 +53,9 @@ export async function POST(req: Request) {
       createdAt: new Date().toISOString(),
     };
 
-    all.push(review);
-    await writeReviews(all);
+    const saved = await addReview(review);
 
-    return NextResponse.json({ success: true, review });
+    return NextResponse.json({ success: true, review: saved });
   } catch (err) {
     console.error("reviews/create error:", err);
     return NextResponse.json({ success: false }, { status: 500 });
