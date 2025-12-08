@@ -1,5 +1,8 @@
+// app/api/admin/orders/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { dbQuery } from "@/lib/db";
+import { sql } from "@/lib/db";
+
+export const runtime = "nodejs";
 
 export async function GET(req: NextRequest) {
   const url = new URL(req.url);
@@ -14,8 +17,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const rows = (await dbQuery(
-      `
+    const rows = await sql`
       SELECT
         id,
         order_number,
@@ -29,10 +31,8 @@ export async function GET(req: NextRequest) {
         created_at
       FROM orders
       ORDER BY id DESC
-      LIMIT ?
-      `,
-      [limit]
-    )) as any[];
+      LIMIT ${limit}
+    `;
 
     return NextResponse.json({ orders: rows });
   } catch (err) {

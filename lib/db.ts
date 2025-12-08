@@ -7,3 +7,7 @@ if (!DATABASE_URL) {
 }
 
 export const sql = neon(DATABASE_URL);
+
+// ✅ Legacy-Aliase für alten Code
+export const dbQuery = sql;
+export const dbExecute = sql;

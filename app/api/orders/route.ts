@@ -1,6 +1,8 @@
 // app/api/orders/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { dbExecute } from "@/lib/db";
+import { sql } from "@/lib/db";
+
+export const runtime = "nodejs";
 
 type OrderPayload = {
   orderNumber: string;
@@ -68,7 +70,7 @@ export async function POST(req: NextRequest) {
       !customer?.zip ||
       !customer?.city ||
       !customer?.country ||
-      !totals?.totalAmount
+      typeof totals?.totalAmount !== "number"
     ) {
       return NextResponse.json(
         { error: "Missing required order fields" },
@@ -76,7 +78,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const sql = `
+    const finalStatus =
+      status ?? (paymentMethod === "vorkasse" ? "pending" : "paid");
+
+    const currency = totals.currency ?? "EUR";
+
+    await sql`
       INSERT INTO orders (
         order_number,
         payment_method,
@@ -92,7 +99,6 @@ export async function POST(req: NextRequest) {
         customer_country,
         total_amount,
         currency,
-        created_at,
         billing_first_name,
         billing_last_name,
         billing_email,
@@ -105,45 +111,36 @@ export async function POST(req: NextRequest) {
         shipping_name,
         shipping_address
       ) VALUES (
-        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(),
-        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+        ${orderNumber},
+        ${paymentMethod},
+        ${finalStatus},
+        ${paypalOrderId ?? null},
+        ${paypalCaptureId ?? null},
+        ${customer.firstName},
+        ${customer.lastName},
+        ${customer.email},
+        ${customer.street},
+        ${customer.zip},
+        ${customer.city},
+        ${customer.country},
+        ${totals.totalAmount},
+        ${currency},
+        ${billing?.firstName ?? null},
+        ${billing?.lastName ?? null},
+        ${billing?.email ?? null},
+        ${billing?.street ?? null},
+        ${billing?.zip ?? null},
+        ${billing?.city ?? null},
+        ${billing?.country ?? null},
+        ${payer?.email ?? null},
+        ${payer?.name ?? null},
+        ${shipping?.name ?? null},
+        ${shipping?.address ?? null}
       )
+      ON CONFLICT (order_number) DO NOTHING
     `;
 
-    const params = [
-      orderNumber,
-      paymentMethod,
-      status ?? (paymentMethod === "vorkasse" ? "pending" : "paid"),
-      paypalOrderId ?? null,
-      paypalCaptureId ?? null,
-      customer.firstName,
-      customer.lastName,
-      customer.email,
-      customer.street,
-      customer.zip,
-      customer.city,
-      customer.country,
-      totals.totalAmount,
-      totals.currency ?? "EUR",
-      billing?.firstName ?? null,
-      billing?.lastName ?? null,
-      billing?.email ?? null,
-      billing?.street ?? null,
-      billing?.zip ?? null,
-      billing?.city ?? null,
-      billing?.country ?? null,
-      payer?.email ?? null,
-      payer?.name ?? null,
-      shipping?.name ?? null,
-      shipping?.address ?? null,
-    ];
-
-    await dbExecute(sql, params);
-
-    return NextResponse.json(
-      { success: true, orderNumber },
-      { status: 201 }
-    );
+    return NextResponse.json({ success: true, orderNumber }, { status: 201 });
   } catch (err: any) {
     console.error("Order insert error:", err);
     return NextResponse.json(

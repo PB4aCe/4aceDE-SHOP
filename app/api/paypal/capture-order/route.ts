@@ -1,7 +1,10 @@
+// app/api/paypal/capture-order/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getPayPalAccessToken } from "@/lib/paypal";
-import { dbQuery } from "@/lib/db";
+import { sql } from "@/lib/db";
 import { sendOrderMail } from "@/lib/mail";
+
+export const runtime = "nodejs";
 
 type CheckoutCustomer = {
   firstName?: string;
@@ -80,7 +83,9 @@ export async function POST(req: NextRequest) {
     const amountValue = capture?.amount?.value;
     const currencyCode = capture?.amount?.currency_code ?? "EUR";
 
-    const numericAmount = amountValue ? parseFloat(amountValue) : totalFromClient ?? 0;
+    const numericAmount = amountValue
+      ? parseFloat(amountValue)
+      : totalFromClient ?? 0;
 
     // Eigene Bestellnummer
     const orderNumber = `4ACE-PP-${new Date().getFullYear()}-${Math.floor(
@@ -106,8 +111,7 @@ export async function POST(req: NextRequest) {
 
     // --- DB: speichern, Fehler nicht weiterwerfen ---
     try {
-      await dbQuery(
-        `
+      await sql`
         INSERT INTO orders (
           order_number,
           payment_method,
@@ -124,25 +128,24 @@ export async function POST(req: NextRequest) {
           paypal_order_id,
           coupon_code
         )
-        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-        `,
-        [
-          orderNumber,
-          "paypal",
-          "paid",
-          customer?.firstName ?? null,
-          customer?.lastName ?? null,
-          customer?.email ?? null,
-          customer?.street ?? null,
-          customer?.zip ?? null,
-          customer?.city ?? null,
-          customer?.country ?? null,
-          numericAmount || null,
-          currencyCode,
-          orderID,
-          couponCode ?? null,
-        ]
-      );
+        VALUES (
+          ${orderNumber},
+          ${"paypal"},
+          ${"paid"},
+          ${customer?.firstName ?? null},
+          ${customer?.lastName ?? null},
+          ${customer?.email ?? null},
+          ${customer?.street ?? null},
+          ${customer?.zip ?? null},
+          ${customer?.city ?? null},
+          ${customer?.country ?? null},
+          ${numericAmount || null},
+          ${currencyCode},
+          ${orderID},
+          ${couponCode ?? null}
+        )
+        ON CONFLICT (order_number) DO NOTHING
+      `;
     } catch (dbErr) {
       console.error("DB-Fehler bei PayPal-Capture (wird ignoriert):", dbErr);
     }
@@ -188,13 +191,9 @@ export async function POST(req: NextRequest) {
             (couponCode
               ? `Gutschein: ${couponCode.toUpperCase()}\n`
               : "") +
-            `\nKunde: ${customer?.firstName || ""} ${
-              customer?.lastName || ""
-            }\n` +
+            `\nKunde: ${customer?.firstName || ""} ${customer?.lastName || ""}\n` +
             `E-Mail: ${customer?.email || "-"}\n` +
-            `Adresse: ${customer?.street || "-"}, ${customer?.zip || ""} ${
-              customer?.city || ""
-            }, ${customer?.country || ""}\n\n` +
+            `Adresse: ${customer?.street || "-"}, ${customer?.zip || ""} ${customer?.city || ""}, ${customer?.country || ""}\n\n` +
             `Artikel:\n${itemsText}\n`,
         });
       }
