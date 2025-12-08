@@ -14,6 +14,8 @@ export function ThankYouContent() {
       ? "PayPal"
       : method === "vorkasse"
       ? "Vorkasse (Banküberweisung)"
+      : method === "mollie"
+      ? "Mollie (z.B. Klarna/Karte/Sofort)"
       : "deine ausgewählte Zahlungsart";
 
   return (

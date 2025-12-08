@@ -1,10 +1,13 @@
 // app/page.tsx
 import Link from "next/link";
 import Image from "next/image";
+import { ShopUpdateTicker } from "@/components/ShopUpdateTicker";
+
 
 export default function HomePage() {
   return (
     <div className="space-y-12">
+      <ShopUpdateTicker />
       {/* Hero / Intro */}
       <section className="flex flex-col md:flex-row items-start md:items-center justify-between gap-10">
         <div className="space-y-4 max-w-xl">
@@ -145,12 +148,11 @@ export default function HomePage() {
           </div>
           <div className="border border-slate-800 rounded-2xl p-4 bg-black/60">
             <p className="text-slate-200 font-semibold mb-1">
-              PayPal und Vorkassen-Checkout
+              PayPal | Klarna | Sofort
             </p>
             <p className="text-slate-400 text-[13px]">
-              Du bezahlst sicher per PayPal oder Vorkasse und bekommst eine
-              klare, nachvollziehbare Abwicklung. Weitere Zahlungsmethoden sind
-              bereits in Planung.
+              Du bezahlst sicher per PayPal, Klarna oder anderen Zahlungsmethoden und bekommst eine
+              klare, nachvollziehbare Abwicklung. 
             </p>
           </div>
         </div>

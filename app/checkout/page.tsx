@@ -3,6 +3,8 @@
 import { useState, useMemo } from "react";
 import { useCart } from "@/components/CartContext";
 import { PayPalButton } from "@/components/PayPalButton";
+import { MolliePayButton } from "@/components/MolliePayButton";
+
 import {
   applyCouponToCart,
   type CartItemInput,
@@ -30,11 +32,14 @@ const defaultData: CheckoutData = {
 };
 
 export default function CheckoutPage() {
-  const { items, total, clearCart } = useCart();
+  const { items, clearCart } = useCart();
 
   const [data, setData] = useState<CheckoutData>(defaultData);
   const [confirmed, setConfirmed] = useState(false);
+
   const [processingVorkasse, setProcessingVorkasse] = useState(false);
+  const [processingMollie, setProcessingMollie] = useState(false);
+
   const [agbAccepted, setAgbAccepted] = useState(false);
 
   // Rabattcode-States
@@ -64,11 +69,7 @@ export default function CheckoutPage() {
 
   // Basis-Zwischensumme aus dem Warenkorb
   const baseSubtotal = useMemo(
-    () =>
-      items.reduce(
-        (sum, i) => sum + i.product.price * i.quantity,
-        0
-      ),
+    () => items.reduce((sum, i) => sum + i.product.price * i.quantity, 0),
     [items]
   );
 
@@ -94,108 +95,171 @@ export default function CheckoutPage() {
     );
   }
 
-  async function handleVorkasse() {
-  if (!confirmed) return;
-  try {
-    setProcessingVorkasse(true);
-
-    // 1. Bisherige API: Mail etc.
-    const res = await fetch("/api/checkout/vorkasse", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        customer: data,
-        items: items.map((i) => ({
-          id: i.product.id,
-          name: i.product.name,
-          price: i.product.price,
-          quantity: i.quantity,
-        })),
-        total: finalTotal,
-        couponCode: activeCouponCode,
-      }),
-    });
-    const json = await res.json();
-    if (!res.ok || !json.success || !json.orderNumber) {
-      alert("Fehler bei der Vorkasse-Bestellung.");
-      setProcessingVorkasse(false);
+  function handleApplyCoupon() {
+    const code = couponInput.trim();
+    if (!code) {
+      setActiveCouponCode(null);
+      setCouponResult(null);
+      setCouponMessage(null);
+      setCouponIsError(false);
       return;
     }
 
-    const orderNumber: string = json.orderNumber;
+    const cartItemsForCoupon: CartItemInput[] = items.map((i) => ({
+      id: i.product.id,
+      price: i.product.price,
+      quantity: i.quantity,
+    }));
 
-    // 2. NEU: Bestellung in DB speichern
-    await fetch("/api/orders", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        orderNumber,
-        paymentMethod: "vorkasse" as const,
-        status: "pending",
-        customer: {
-          firstName: data.firstName,
-          lastName: data.lastName,
-          email: data.email,
-          street: data.street,
-          zip: data.zip,
-          city: data.city,
-          country: data.country,
-        },
-        totals: {
-          totalAmount: finalTotal,
-          currency: "EUR",
-        },
-        // billing/payer/shipping kannst du später bei Bedarf ergänzen
-      }),
-    });
+    const result = applyCouponToCart(cartItemsForCoupon, code);
 
-    // 3. Warenkorb leeren + Redirect
-    clearCart();
-    window.location.href = `/thank-you?order=${encodeURIComponent(
-      orderNumber
-    )}&method=vorkasse`;
-  } catch (e) {
-    console.error(e);
-    alert("Unerwarteter Fehler bei der Vorkasse-Bestellung.");
-    setProcessingVorkasse(false);
-  }
-}
-
-
-  function handleApplyCoupon() {
-  const code = couponInput.trim();
-  if (!code) {
-    setActiveCouponCode(null);
-    setCouponResult(null);
-    setCouponMessage(null);
-    setCouponIsError(false);
-    return;
+    if (result.discountAmount > 0 && result.appliedCoupon) {
+      setActiveCouponCode(code.toUpperCase());
+      setCouponResult(result);
+      setCouponMessage(
+        `Gutschein "${code.toUpperCase()}" angewendet: -${result.discountAmount
+          .toFixed(2)
+          .replace(".", ",")} €`
+      );
+      setCouponIsError(false);
+    } else {
+      setActiveCouponCode(null);
+      setCouponResult(null);
+      setCouponMessage(`Gutschein "${code.toUpperCase()}" ist nicht gültig.`);
+      setCouponIsError(true);
+    }
   }
 
-  const cartItemsForCoupon: CartItemInput[] = items.map((i) => ({
-    id: i.product.id,
-    price: i.product.price,
-    quantity: i.quantity,
-  }));
+  // ✅ VORKASSE
+  async function handleVorkasse() {
+    if (!confirmed) return;
 
-  const result = applyCouponToCart(cartItemsForCoupon, code);
+    try {
+      setProcessingVorkasse(true);
 
-  if (result.discountAmount > 0 && result.appliedCoupon) {
-    setActiveCouponCode(code.toUpperCase());
-    setCouponResult(result);
-    setCouponMessage(
-      `Gutschein "${code.toUpperCase()}" angewendet: -${result.discountAmount
-        .toFixed(2)
-        .replace(".", ",")} €`
-    );
-    setCouponIsError(false);
-  } else {
-    setActiveCouponCode(null);
-    setCouponResult(null);
-    setCouponMessage(`Gutschein "${code.toUpperCase()}" ist nicht gültig.`);
-    setCouponIsError(true);
+      // 1) Deine bestehende API (Mail etc.)
+      const res = await fetch("/api/checkout/vorkasse", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customer: data,
+          items: items.map((i) => ({
+            id: i.product.id,
+            name: i.product.name,
+            price: i.product.price,
+            quantity: i.quantity,
+          })),
+          total: finalTotal,
+          couponCode: activeCouponCode,
+        }),
+      });
+
+      const json = await res.json();
+
+      if (!res.ok || !json.success || !json.orderNumber) {
+        alert("Fehler bei der Vorkasse-Bestellung.");
+        setProcessingVorkasse(false);
+        return;
+      }
+
+      const orderNumber: string = json.orderNumber;
+
+      // 2) OPTIONAL: DB-Speicherung (nicht blockierend!)
+      try {
+        await fetch("/api/orders", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            orderNumber,
+            paymentMethod: "vorkasse",
+            status: "pending",
+            customer: {
+              firstName: data.firstName,
+              lastName: data.lastName,
+              email: data.email,
+              street: data.street,
+              zip: data.zip,
+              city: data.city,
+              country: data.country,
+            },
+            totals: {
+              totalAmount: finalTotal,
+              currency: "EUR",
+            },
+            couponCode: activeCouponCode ?? undefined,
+            items: items.map((i) => ({
+              id: i.product.id,
+              name: i.product.name,
+              price: i.product.price,
+              quantity: i.quantity,
+            })),
+          }),
+        });
+      } catch (dbErr) {
+        console.warn("DB-Fehler bei Vorkasse (ignoriert):", dbErr);
+      }
+
+      // 3) Warenkorb leeren + Redirect
+      clearCart();
+      window.location.href = `/thank-you?order=${encodeURIComponent(
+        orderNumber
+      )}&method=vorkasse`;
+    } catch (e) {
+      console.error(e);
+      alert("Unerwarteter Fehler bei der Vorkasse-Bestellung.");
+      setProcessingVorkasse(false);
+    }
   }
-}
+
+  // ✅ MOLLIE / KLARNA / CARD etc.
+    async function handleMollie() {
+    if (!confirmed) return;
+
+    try {
+      setProcessingMollie(true);
+
+      const res = await fetch("/api/mollie/create-payment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customer: data,
+          items: items.map((i) => ({
+            id: i.product.id,
+            name: i.product.name,
+            price: i.product.price,
+            quantity: i.quantity,
+          })),
+          total: finalTotal,
+          couponCode: activeCouponCode,
+        }),
+      });
+
+      const json = await res.json();
+
+      if (!res.ok || !json.success || !json.checkoutUrl || !json.orderNumber) {
+        alert("Mollie-Zahlung konnte nicht gestartet werden.");
+        setProcessingMollie(false);
+        return;
+      }
+
+      // ✅ paymentId lokal merken (ohne DB)
+      if (json.paymentId) {
+        sessionStorage.setItem(
+          `mollie_payment_${json.orderNumber}`,
+          json.paymentId
+        );
+      }
+
+      // ✅ Optional auch order fallback speichern
+      sessionStorage.setItem("mollie_last_order", json.orderNumber);
+
+      window.location.href = json.checkoutUrl;
+    } catch (e) {
+      console.error(e);
+      alert("Unerwarteter Fehler beim Start der Mollie-Zahlung.");
+      setProcessingMollie(false);
+    }
+  }
 
 
   return (
@@ -387,9 +451,7 @@ export default function CheckoutPage() {
               <>
                 <button
                   type="button"
-                  onClick={() => {
-                    setConfirmed(false);
-                  }}
+                  onClick={() => setConfirmed(false)}
                   className="text-xs px-4 py-2 rounded-full border border-slate-500 text-slate-200 hover:border-slate-200 hover:bg-slate-900 transition-all"
                 >
                   Daten ändern
@@ -406,6 +468,7 @@ export default function CheckoutPage() {
 
       {/* Bestellübersicht + Zahlarten */}
       <div className="space-y-4">
+        {/* Übersicht */}
         <div className="border border-slate-800 rounded-2xl p-4 bg-black/60 space-y-3">
           <h2 className="text-sm font-semibold mb-1">Übersicht</h2>
           <ul className="space-y-2 text-sm text-slate-200">
@@ -450,7 +513,7 @@ export default function CheckoutPage() {
             </span>
           </div>
 
-          {/* Coupon-Eingabe */}
+          {/* Coupon */}
           <div className="mt-4 space-y-2">
             <label className="block text-[11px] text-slate-400">
               Rabattcode
@@ -470,29 +533,38 @@ export default function CheckoutPage() {
                 Anwenden
               </button>
             </div>
-            {couponMessage && (
-  <p
-    className={`text-[11px] ${
-      couponIsError ? "text-red-400" : "text-emerald-400"
-    }`}
-  >
-    {couponMessage}
-  </p>
-)}
 
+            {couponMessage && (
+              <p
+                className={`text-[11px] ${
+                  couponIsError ? "text-red-400" : "text-emerald-400"
+                }`}
+              >
+                {couponMessage}
+              </p>
+            )}
           </div>
         </div>
 
+        {/* Zahlarten */}
         {confirmed && (
           <div className="space-y-3">
             <div className="border border-slate-800 rounded-2xl p-4 bg-black/60 space-y-3">
               <p className="text-xs text-slate-300 mb-1">Bezahlmethoden</p>
 
-              {/* PayPal – bekommt Checkout-Daten + Coupon + finalen Betrag */}
+              {/* PayPal */}
               <PayPalButton
                 checkoutCustomer={data}
                 couponCode={activeCouponCode ?? undefined}
                 amount={finalTotal}
+              />
+
+              {/* ✅ Mollie Animated Button */}
+              <MolliePayButton
+                amount={finalTotal}
+                disabled={processingMollie}
+                onStartPayment={handleMollie}
+                label="Weitere Zahlarten über Mollie"
               />
 
               {/* Vorkasse */}
@@ -510,6 +582,11 @@ export default function CheckoutPage() {
                 Bei Vorkasse erhältst du eine E-Mail mit allen Überweisungsdaten.
                 Die Bestellung wird erst nach Zahlungseingang von 4aCe
                 bearbeitet.
+              </p>
+
+              <p className="text-[11px] text-slate-500">
+                Klarna, Apple Pay & Karten-Zahlung laufen über Mollie (Hosted
+                Checkout).
               </p>
             </div>
           </div>

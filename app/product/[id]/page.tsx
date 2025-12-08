@@ -4,7 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { products } from "@/data/products";
 import { AddToCartButton } from "@/components/AddToCartButton";
-import { BlackWeekBanner } from "@/components/BlackWeekBanner";
+import { ReviewsSection } from "@/components/ReviewsSection";
+import { getAvailabilityMeta } from "@/lib/availability";
+
 
 // In Next 16 kann params ein Promise sein → hier direkt so typisieren
 export default async function ProductPage({
@@ -17,8 +19,11 @@ export default async function ProductPage({
   const product = products.find((p) => p.id === id);
   if (!product) return notFound();
 
+  const availability = getAvailabilityMeta(product.availability);
+
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Zurück zur Übersicht */}
       <div>
         <Link
@@ -29,24 +34,25 @@ export default async function ProductPage({
         </Link>
       </div>
 
+      {/* Produktbereich */}
       <div className="grid gap-8 md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] items-start">
-  <div className="space-y-4">
-    {product.isNew && (
-      <div className="inline-flex px-3 py-1 text-[11px] font-semibold uppercase tracking-wide bg-red-600 text-white rounded-full">
-        NEU!
-      </div>
-    )}
+        <div className="space-y-4">
+          {product.isNew && (
+            <div className="inline-flex px-3 py-1 text-[11px] font-semibold uppercase tracking-wide bg-red-600 text-white rounded-full">
+              NEU!
+            </div>
+          )}
 
-    <div className="h-96 w-64 mx-auto bg-slate-900/70 rounded-2xl overflow-hidden flex items-center justify-center">
-      <Image
-        src={product.image}
-        alt={product.name}
-        width={700}
-        height={1050}
-        className="max-h-full w-auto object-contain"
-      />
-    </div>
-  </div>
+          <div className="h-96 w-64 mx-auto bg-slate-900/70 rounded-2xl overflow-hidden flex items-center justify-center">
+            <Image
+              src={product.image}
+              alt={product.name}
+              width={700}
+              height={1050}
+              className="max-h-full w-auto object-contain"
+            />
+          </div>
+        </div>
 
         <div className="space-y-4">
           <div>
@@ -58,6 +64,13 @@ export default async function ProductPage({
             </p>
           </div>
 
+          <div className="flex items-center gap-2">
+  <span className={availability.className}>
+    {availability.label}
+  </span>
+</div>
+
+
           <p className="text-[13px] text-slate-400">{product.tagline}</p>
 
           <ul className="text-sm text-slate-200 space-y-1">
@@ -67,33 +80,41 @@ export default async function ProductPage({
           </ul>
 
           <div className="flex items-center justify-between pt-4">
-  <div className="flex flex-col">
-    {typeof product.originalPrice === "number" &&
-    product.originalPrice > product.price ? (
-      <>
-        <span className="text-xs text-red-400 line-through">
-          {product.originalPrice.toFixed(2).replace(".", ",")} €
-        </span>
-        <span className="text-xl font-semibold text-white">
-          {product.price.toFixed(2).replace(".", ",")} €
-        </span>
-      </>
-    ) : (
-      <span className="text-xl font-semibold text-white">
-        {product.price.toFixed(2).replace(".", ",")} €
-      </span>
-    )}
-  </div>
+            <div className="flex flex-col">
+              {typeof product.originalPrice === "number" &&
+              product.originalPrice > product.price ? (
+                <>
+                  <span className="text-xs text-red-400 line-through">
+                    {product.originalPrice.toFixed(2).replace(".", ",")} €
+                  </span>
+                  <span className="text-xl font-semibold text-white">
+                    {product.price.toFixed(2).replace(".", ",")} €
+                  </span>
+                </>
+              ) : (
+                <span className="text-xl font-semibold text-white">
+                  {product.price.toFixed(2).replace(".", ",")} €
+                </span>
+              )}
+            </div>
 
-  <AddToCartButton product={product} />
-</div>
+            <AddToCartButton
+  product={product}
+  disabled={!availability.canAdd}
+  disabledText="Nicht lieferbar"
+/>
+
+          </div>
 
           <p className="text-[11px] text-slate-400">
-            🔒Sicherer Checkout über SSL & PayPal. 🚚 Versand aus Deutschland,
-            📞 Support direkt von 4aCe.
+            🔒 Sicherer Checkout über SSL & PayPal/Mollie. 🚚 Versand aus
+            Deutschland, 📞 Support direkt von 4aCe.
           </p>
         </div>
       </div>
+
+      {/* ✅ Bewertungen */}
+      <ReviewsSection productId={product.id} />
     </div>
   );
 }

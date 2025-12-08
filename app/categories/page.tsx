@@ -1,6 +1,6 @@
 // app/categories/page.tsx
 import Link from "next/link";
-import { BlackWeekBanner } from "@/components/BlackWeekBanner";
+//import { BlackWeekBanner } from "@/components/BlackWeekBanner";
 
 const categories = [
   {
@@ -25,7 +25,7 @@ export default function CategoriesPage() {
         </div>
       </header>
 
-      <BlackWeekBanner />
+    
 
       <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {categories.map((cat) => (

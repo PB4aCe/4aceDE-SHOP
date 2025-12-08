@@ -123,7 +123,7 @@ export default function RootLayout({
                   </span>
                 </div>
                 <div>
-                  Zahlungen über PayPal (inkl. Käuferschutz) oder Vorkasse ·
+                  Zahlungen über PayPal | Mollie (Klarna etc.) (inkl. Käuferschutz) oder Vorkasse ·
                   SSL-verschlüsselter Checkout.
                 </div>
               </div>

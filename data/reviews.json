@@ -1,0 +1,135 @@
+{
+  "reviews": [
+    {
+      "id": "X",
+      "productId": "ohne-liebe-22",
+      "rating": 5,
+      "title": "Authentisch",
+      "text": "Auch gerne gelesen. Ich hoffe, es folgen noch viele Bücher.",
+      "name": "Sam (Amazon Rezension)",
+      "email": "amazon.com",
+      "createdAt": "2024-11-25T20:43:46.470Z"
+    },
+    {
+      "id": "XX",
+      "productId": "ohne-liebe-22",
+      "rating": 5,
+      "title": "Sehr schönes Buch",
+      "text": "Ich kann das Buch nur immer wieder weiter empfehlen denn es werden Themen angesprochen und Situationen in welche sich viele selber finden. Der schreib Style ist auch so das man sich wirklich rein fühlt als wäre es ein Tagebuch Eintrag.",
+      "name": "Emilia (Amazon Rezension)",
+      "email": "amazon.com",
+      "createdAt": "2023-01-08T20:46:48.154Z"
+    },
+    {
+      "id": "XXX",
+      "productId": "ohne-liebe-22",
+      "rating": 4,
+      "title": "Ganz nett :)",
+      "text": "Hier und da paar Grammatikfehler, macht das Ganze aber Authentisch.\nLG",
+      "name": "Radwan Othman (Amazon Rezension)",
+      "email": "amazon.com",
+      "createdAt": "2023-02-15T20:46:48.154Z"
+    },
+    {
+      "id": "XXXX",
+      "productId": "ohne-liebe-22",
+      "rating": 5,
+      "title": "Sehr schönes Buch",
+      "text": "Jede Seite ist es Wert gelesen zu werden! Kann es zu 100% weiterempfehlen.",
+      "name": "Boss (Amazon Rezension)",
+      "email": "amazon.com",
+      "createdAt": "2023-03-09T20:46:48.154Z"
+    },
+    {
+      "id": "XXXXX",
+      "productId": "ohne-liebe-22",
+      "rating": 5,
+      "title": "Meine Tochter liebt es",
+      "text": "Schön geschrieben",
+      "name": "Samah R. (Amazon Rezension)",
+      "email": "amazon.com",
+      "createdAt": "2023-01-20T12:00:00.000Z"
+    },
+    {
+      "id": "XXXXXX",
+      "productId": "ohne-liebe-22",
+      "rating": 5,
+      "title": ".",
+      "text": "Ich liebes!",
+      "name": "Farbe war nicht wie ich sie bestellt hatte! Qualität Müll (Amazon Rezension)",
+      "email": "amazon.com",
+      "createdAt": "2023-05-07T12:00:00.000Z"
+    },
+    {
+      "id": "XXXXXXX",
+      "productId": "ohne-liebe-22",
+      "rating": 5,
+      "title": "Woow",
+      "text": "Ich habe dieses Buch gelesen\nFühle mich als hätte ich es geschrieben!\n\nMeryem egal wer du bist meld dich bei mir !",
+      "name": "Bilal serhan (Amazon Rezension)",
+      "email": "amazon.com",
+      "createdAt": "2022-09-30T12:00:00.000Z"
+    },
+    {
+  "id": "AMZ-BADT-SAM-20241125",
+  "productId": "badt-2023",
+  "rating": 5,
+  "title": "Gerne gelesen",
+  "text": "Vielen Dank! Mutige junge Autorin.",
+  "name": "Sam (Amazon Rezension)",
+  "email": "amazon.com",
+  "createdAt": "2024-11-25T12:00:00.000Z"
+},
+{
+  "id": "AMZ-BADT-ILA-20231203",
+  "productId": "badt-2023",
+  "rating": 5,
+  "title": "Das emphatischste Buch was ich jemals gelesen habe!",
+  "text": "Erstmal war ich skeptisch, da ich mir dachte dass es viel zu allgemein sein wird und ich sogesagt nicht \"mitfühlen\" kann.\nDies waren meine Gedanken BEVOR ich das Buch angefangen hatte. Es hat mich komplett aber der ersten Seite zerissen. Ich lese NIE Bücher, da sie mich immer langweilen ab den ersten Seiten. Doch dieses Buch hat mich wirklich mitgenommen. Als wäre ich einer Zeitmaschine, würde in meine Kindheit reisen und die beobachtende Rolle einnehmen bei den Schicksalsschlägen. Es hat zum einen mein inneres Kind geheilt und zum anderen mich daran erinnert , dass meine Wunden verheilen können aber immer sichtbar sein werden. Ich danke für dieses Buch und empfehle es extrem weiter!",
+  "name": "Ila (Amazon Rezension)",
+  "email": "amazon.com",
+  "createdAt": "2023-12-03T12:00:00.000Z"
+},
+{
+  "id": "AMZ-BADT-AYLIN-20231202",
+  "productId": "badt-2023",
+  "rating": 5,
+  "title": "Ich liebe es!",
+  "text": "Dieses Buch hat so viel in mir ausgelöst.\nAylins Geschichte hat mir geholfen meine eigene Geschichte anzugehen.\nIn diesem Buch, in jedem Wort steckt soviel Herzblut.\nIch kann dieses Buch jedem mit ähnlichen Schicksal nur ans Herz legen..\nIhr werdet euch verstanden fühlen.\nRiesen Dank an die Autorin für dieses Werk.",
+  "name": "Aylin Steinbach (Amazon Rezension)",
+  "email": "amazon.com",
+  "createdAt": "2023-12-02T12:00:00.000Z"
+},
+{
+  "id": "AMZ-BADT-EM-20231203",
+  "productId": "badt-2023",
+  "rating": 5,
+  "title": "Sehr schönes Buch",
+  "text": "Ich finde das Buch echt stark geschrieben, ich empfehle euch das Buch zu kaufen!\n\nMeryem fühl dich gedrückt🫶🏻",
+  "name": "Em (Amazon Rezension)",
+  "email": "amazon.com",
+  "createdAt": "2023-12-03T12:00:00.000Z"
+},
+{
+  "id": "AMZ-BADT-FREDDY-20240204",
+  "productId": "badt-2023",
+  "rating": 5,
+  "title": "Nur zu empfehlen!",
+  "text": "Dieses Buch sollte jeder gelesen haben!",
+  "name": "Freddy (Amazon Rezension)",
+  "email": "amazon.com",
+  "createdAt": "2024-02-04T12:00:00.000Z"
+},
+{
+  "id": "AMZ-BADT-AMAZONKUNDE-20231216",
+  "productId": "badt-2023",
+  "rating": 5,
+  "title": "Geschenk bekommen",
+  "text": "Ist ein krasses Buch , sehr traurig die Geschichte",
+  "name": "Amazon Kunde (Amazon Rezension)",
+  "email": "amazon.com",
+  "createdAt": "2023-12-16T12:00:00.000Z"
+}
+
+  ]
+}
