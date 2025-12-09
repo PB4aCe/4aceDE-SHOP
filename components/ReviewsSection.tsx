@@ -204,7 +204,7 @@ export function ReviewsSection({ productId }: { productId: string }) {
           />
           <input
             className="rounded-md bg-slate-950 border border-slate-700 px-2 py-1 text-xs text-slate-100"
-            placeholder="E-Mail (Pflicht für 1x-Regel)"
+            placeholder="E-Mail"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
