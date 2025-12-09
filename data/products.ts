@@ -83,7 +83,7 @@ export const products: Product[] = [
     isNew: false,
     category: "meryem-boral",
 
-    availability: "1-3",
+    availability: "5-7",
   },
   {
     id: "badt-2023",
